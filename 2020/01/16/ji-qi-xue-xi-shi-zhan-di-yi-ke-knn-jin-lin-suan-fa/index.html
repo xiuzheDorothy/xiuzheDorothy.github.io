@@ -6,7 +6,8 @@
     <meta charset="utf-8">
     <meta name="keywords" content="机器学习实战第一课——KNN近邻算法, 休蛰">
     <meta name="description" content="
-title: 机器学习实战第一课——KNN近邻算法top: falsecover: falsetoc: truemathjax: truedate: 2020-01-16 01:57:44password:summary:tags:cat">
+纸上得来终觉浅，绝知此事要躬行
+　　距离我“入门”机器已经半年了，之所以是假入门，是因为平时课程实在是太繁重了，刷均分，赶作业，完全顾不上认真学习。因为渐渐的觉得每周跟的组会上面研究生学长分享的那些东西听不太懂，是为基础过于薄弱，同时又进">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -361,9 +362,13 @@ title: 机器学习实战第一课——KNN近邻算法top: falsecover: falsetoc
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">
+                                <span class="chip bg-color">机器学习</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
@@ -392,17 +397,14 @@ title: 机器学习实战第一课——KNN近邻算法top: falsecover: falsetoc
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <hr>
-<p>title: 机器学习实战第一课——KNN近邻算法<br>top: false<br>cover: false<br>toc: true<br>mathjax: true<br>date: 2020-01-16 01:57:44<br>password:<br>summary:<br>tags:<br>categories:</p>
-<hr>
-<blockquote>
+                <blockquote>
 <h2 id="纸上得来终觉浅，绝知此事要躬行"><a href="#纸上得来终觉浅，绝知此事要躬行" class="headerlink" title="纸上得来终觉浅，绝知此事要躬行"></a><strong>纸上得来终觉浅，绝知此事要躬行</strong></h2></blockquote>
 <p>　　距离我“入门”机器已经半年了，之所以是假入门，是因为平时课程实在是太繁重了，刷均分，赶作业，完全顾不上认真学习。因为渐渐的觉得每周跟的组会上面研究生学长分享的那些东西听不太懂，是为基础过于薄弱，同时又进入了一个数据挖掘的课题组，不能当个半吊子(知识点懂一半，代码不会写)啥都不懂，所以打算趁着寒假时间还算充足，把《机器学习实战》上的算法都实现一遍（主要代码与内容学习还是参考apachecn的github所得）。<br>　　今天复现的是K-近邻算法，是所有机器学习算法中最简单的之一[wiki]，主要思想是求出测试数据与全体训练数据集之间的欧氏距离，然后对欧氏距离进行排序，返回前k个距离最短的样本数据集，这k个数据项中出现次数最多的标签即为测试数据的预测标签。为防止各种标签在k个最短距离数据项中只出现一次，k应该大于标签类别数（我瞎猜的，应该是这样）<br>　　我的python基本上处于一个入门阶段，今天实操一遍，收获颇丰，也深感能力之不足，同志仍需努力。<br>　　KNN没有训练过程，只有一次一次的计算与比较，所以说它的空间复杂度与计算复杂度都很高，下面是用python复现的代码<br>总的代码如下</p>
 <h3 id="1-准备模块"><a href="#1-准备模块" class="headerlink" title="1. 准备模块"></a>1. 准备模块</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> __future__ <span class="keyword">import</span> print_function</span><br><span class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> operator</span><br><span class="line"><span class="keyword">from</span> os <span class="keyword">import</span> listdir</span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> Counter</span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>__future__模块可以引用未来版本python库中的函数，其实我的版本已经是3.x，所以没有必要走这一步</li>
-<li>将numpy导入有多种方法，一般常用import numpy as np，这里的这种方法可以不加前缀直接调用numpy中的函数如zeros，这种方式类似于C语言中的名称空间<h3 id="2-数据读取模块"><a href="#2-数据读取模块" class="headerlink" title="2.数据读取模块"></a>2.数据读取模块</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">fr=open(<span class="string">"E:\MachineLearning\KNN\dataset\datingTestSet2.txt"</span>)</span><br><span class="line">numberOfLines=len(fr.readlines())</span><br><span class="line">fr.seek(<span class="number">0</span>)</span><br><span class="line">returnMat=zeros((numberOfLines,<span class="number">3</span>))</span><br><span class="line">classLabelVector=[]</span><br><span class="line">index=<span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> fr.readlines():</span><br><span class="line">    line=line.strip()</span><br><span class="line">    listFromLine=line.split(<span class="string">'\t'</span>)</span><br><span class="line">    returnMat[index,:]=listFromLine[<span class="number">0</span>:<span class="number">3</span>]</span><br><span class="line">    classLabelVector.append(int(listFromLine[<span class="number">-1</span>]))  <span class="comment"># classLabelVector 与 returnMat 一一对应，前者为所属标签，后者为具体数据</span></span><br><span class="line">    index+=<span class="number">1</span></span><br></pre></td></tr></table></figure></li>
+<li>将numpy导入有多种方法，一般常用import numpy as np，这里的这种方法可以不加前缀直接调用numpy中的函数如zeros，这种方式类似于C语言中的名称空间<h3 id="2-数据读取模块"><a href="#2-数据读取模块" class="headerlink" title="2.数据读取模块"></a>2.数据读取模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">fr&#x3D;open(&quot;E:\MachineLearning\KNN\dataset\datingTestSet2.txt&quot;)</span><br><span class="line">numberOfLines&#x3D;len(fr.readlines())</span><br><span class="line">fr.seek(0)</span><br><span class="line">returnMat&#x3D;zeros((numberOfLines,3))</span><br><span class="line">classLabelVector&#x3D;[]</span><br><span class="line">index&#x3D;0</span><br><span class="line">for line in fr.readlines():</span><br><span class="line">    line&#x3D;line.strip()</span><br><span class="line">    listFromLine&#x3D;line.split(&#39;\t&#39;)</span><br><span class="line">    returnMat[index,:]&#x3D;listFromLine[0:3]</span><br><span class="line">    classLabelVector.append(int(listFromLine[-1]))  # classLabelVector 与 returnMat 一一对应，前者为所属标签，后者为具体数据</span><br><span class="line">    index+&#x3D;1</span><br></pre></td></tr></table></figure></li>
 <li>这一部分呢，强调一下文件的读取，如今数据挖掘与数据分析方面更常用pandas，不过目前还不需要那么高深的功能，以后再用。</li>
 <li>readlines()会按行读取数据（读取所有行并返回list），读取完毕之后指向最后一个字符，所以如果需要重新读取，要用seek(0)指向初始位置<br>接下来strip()函数可以删去str的头或尾的换行符或者空格或者，指定字符（需指明参数）</li>
 <li>split()函数指定分隔符对str进行切片，在本代码中将str分成四个list，前三个为数据，存入returnMat中，最后一个是标签，用append()方法存入classLabelVector中</li>
@@ -497,7 +499,11 @@ title: 机器学习实战第一课——KNN近邻算法top: falsecover: falsetoc
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
+                            
+                                <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">
+                                    <span class="chip bg-color">机器学习</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -536,29 +542,32 @@ title: 机器学习实战第一课——KNN近邻算法top: falsecover: falsetoc
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2020/01/16/article-title/">
+                <a href="/2020/01/16/ji-qi-xue-xi-shi-zhan-di-yi-ke-knn-jin-lin-suan-fa/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="article title">
+                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="机器学习实战第一课——KNN近邻算法">
                         
-                        <span class="card-title">article title</span>
+                        <span class="card-title">机器学习实战第一课——KNN近邻算法</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
+纸上得来终觉浅，绝知此事要躬行
+　　距离我“入门”机器已经半年了，之所以是假入门，是因为平时课程实在是太繁重了，刷均分，赶作业，完全顾不上认真学习。因为渐渐的觉得每周跟的组会上面研究生学长分享的那些东西听不太懂，是为基础过于薄弱，同时又进
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-01-16
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-01-16
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -566,6 +575,15 @@ title: 机器学习实战第一课——KNN近邻算法top: falsecover: falsetoc
                             
                         </span>
                     </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">
+                        <span class="chip bg-color">机器学习</span>
+                    </a>
+                    
                 </div>
                 
             </div>
@@ -577,26 +595,25 @@ title: 机器学习实战第一课——KNN近邻算法top: falsecover: falsetoc
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/01/15/ye-tan-logistic-hui-gui-yu-shen-jing-yuan-yu-qi-ta/">
+                <a href="/2020/01/16/xin-de-bo-ke-di-zhi/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/19.jpg" class="responsive-img" alt="也谈logistic回归与神经元与其他">
+                        <img src="/medias/featureimages/12.jpg" class="responsive-img" alt="新的博客地址">
                         
-                        <span class="card-title">也谈logistic回归与神经元与其他</span>
+                        <span class="card-title">新的博客地址</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
-推荐好书：《神经网络与深度学习》邱锡鹏，适合我这种才入门的小白
+                            哈，github运行网页实在是太慢了，现在在码云上也开了个仓库（gitee pages），网址如下点击这里
 
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-01-15
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-01-16
                             </span>
                         <span class="publish-author">
                             
@@ -609,8 +626,8 @@ title: 机器学习实战第一课——KNN近邻算法top: falsecover: falsetoc
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">
-                        <span class="chip bg-color">深度学习</span>
+                    <a href="/tags/%E5%8D%9A%E5%AE%A2%E8%BF%90%E7%BB%B4/">
+                        <span class="chip bg-color">博客运维</span>
                     </a>
                     
                 </div>
